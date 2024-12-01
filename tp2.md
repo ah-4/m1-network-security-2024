@@ -191,3 +191,65 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+# DHCP spoofing
+
+```bash
+sudo apt install dnsmasq
+
+sudo nano /etc/dnsmasq.conf
+dhcp-range=10.2.1.220,10.2.1.230,12h
+dhcp-option=3,10.2.1.1
+dhcp-option=6,8.8.8.8,8.8.4.4
+log-dhcp
+
+sudo systemctl restart dnsmasq
+ip addr show
+sudo tail -f /var/log/syslog
+```
+
+## Protection
+
+**Port Security**
+La sécurité des ports sur les commutateurs permet de limiter le nombre d'adresses MAC apprises dynamiquement sur un port donné. Cela empêche un attaquant d'utiliser un grand nombre d'adresses MAC pour mener une attaque DHCP Starvation.
+
+**Filtrage des adresses MAC**
+En configurant une liste blanche des adresses MAC autorisées sur le réseau, il est possible de restreindre l'accès aux seuls dispositifs approuvés, réduisant ainsi le risque d'attaques par des dispositifs non autorisés.
+
+# Attaques ARP
+
+
+## Protection
+**Chiffrement du trafic réseau**
+
+HTTPS / VPN
+Utiliser des protocoles sécurisés comme HTTPS ou des VPN pour chiffrer le trafic. Même si une attaque MITM (via ARP) réussit, les données interceptées seront illisibles.
+
+# DNS Spoofing
+
+Le DNS Spoofing est une attaque qui peut rediriger le trafic réseau ou intercepter des données. Voici des méthodes simples pour sécuriser votre réseau contre ce type d'attaque.
+
+
+## 1. Activer DNSSEC (Domain Name System Security Extensions)
+
+**Qu'est-ce que c'est ?**  
+
+DNSSEC ajoute une signature numérique pour vérifier que les réponses DNS proviennent bien de l'autorité légitime et qu'elles n'ont pas été modifiées.
+
+**Pourquoi l'utiliser ?**  
+
+Cela empêche les réponses DNS falsifiées.
+
+**Comment faire ?**  
+
+Activez DNSSEC sur votre serveur DNS.
+Utilisez des fournisseurs DNS qui prennent en charge DNSSEC.
+
+## 2. Utiliser des DNS sécurisés
+
+- **Exemples de serveurs DNS sûrs :**
+  - Google Public DNS : `8.8.8.8` et `8.8.4.4`
+  - Cloudflare : `1.1.1.1` et `1.0.0.1`
+  - Quad9 : `9.9.9.9`
+- **Pourquoi ?**  
+  Ces serveurs DNS sont bien protégés et plus fiables contre les attaques.
